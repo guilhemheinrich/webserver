@@ -14,6 +14,8 @@ exports.createDatabase = function() {
 }
 
 exports.insertHistoryLineIntoDb = function (historyLines) {
+    if (!Array.isArray(historyLines) && historyLines.length > 0) return;
+    console.log(historyLines);
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb://localhost:27017/mydb";
     MongoClient.connect(url, function(err, db) {
@@ -28,21 +30,31 @@ exports.insertHistoryLineIntoDb = function (historyLines) {
 }
 
 exports.processHistoryFile = function (files, device) {
-    var lineReader = require('readline').createInterface({
-        input: require('fs').createReadStream(files.filetoupload.path)
-    });
+    console.log(Object.keys(files));
+    console.log(files['filetouplad']);
+    var lineReader;
+    // Black magic
+    if (files['filetouplad']) {
+        lineReader = require('readline').createInterface({
+            input: require('fs').createReadStream(files['filetouplad'].path)
+        });
+    } else {
+        lineReader = require('readline').createInterface({
+            input: require('fs').createReadStream(files.filetoupload.path)
+        });
+    }
     let allObj = [];
-
     lineReader.on('line', function (line) {
         // Check if it is an history line
         let check = /^\s*([0-9]*)  .*$/.test(line);
         if (check) {
             let myRegexp = /^\s*([0-9]*)(.*)/g;
             let match = myRegexp.exec(line)
+            console.log(match);
             allObj.push({ date: Date.now(), historyLine: match[0], device: device, lineIndex : match[1] });
         }  else {
-            console.log('Ignored line content:');
-            console.log(line);
+            // console.log('Ignored line content:');
+            // console.log(line);
         }
     });
     return allObj;
