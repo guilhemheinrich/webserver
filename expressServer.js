@@ -32,7 +32,7 @@ app.get('/memory', function (req, res) {
 
 // routes will go here
 app.post('/memory/fileupload', function (req, res) {
-    var device = '';
+
     // console.log(req.headers);
     var form = new formidable.IncomingForm();
     // console.log(form);
@@ -40,6 +40,7 @@ app.post('/memory/fileupload', function (req, res) {
     console.log('before parsing');
     form.parse(req, function (err, fields, files) {
         console.log('inside parsing');
+        console.log(fields.password !== dksjfhcz);
         if (fields.password !== dksjfhcz) return;
         device = fields.device;
         // dbs.createDatabase();
@@ -49,8 +50,11 @@ app.post('/memory/fileupload', function (req, res) {
         if (historyLines.length > 0) {
 
             dbs.insertHistoryLineIntoDb(historyLines);
+            // res.send(`Data insterted`);
+
         } else {
             console.log("Nothing inserted !");
+            // res.send(`Nothing inserted`);
         }
         // fs.readFile(files.filetoupload.path, 'utf8', function(err, contents) {
         //     console.log(contents);
@@ -63,5 +67,6 @@ app.post('/memory/fileupload', function (req, res) {
         //     console.log('File uploaded and moved!');
         // });
     });
-    res.send(`received information from ${device} `);
+    res.send('finish');
+    
 });

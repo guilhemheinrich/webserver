@@ -29,16 +29,20 @@ exports.insertHistoryLineIntoDb = function (historyLines) {
         });
 }
 
-exports.processHistoryFile = function (files, device) {
-    console.log(Object.keys(files));
-    console.log(files['filetouplad']);
+exports.
+processHistoryFile = function (files, device) {
+    // console.log(Object.keys(files));
     var lineReader;
     // Black magic
     if (files['filetouplad']) {
+        console.log('case bracket');
+        console.log(files['filetouplad']);
         lineReader = require('readline').createInterface({
             input: require('fs').createReadStream(files['filetouplad'].path)
         });
     } else {
+        console.log('case object');
+        console.log(files.filetoupload);
         lineReader = require('readline').createInterface({
             input: require('fs').createReadStream(files.filetoupload.path)
         });
