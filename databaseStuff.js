@@ -6,21 +6,24 @@ exports.createDatabase = function() {
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb://localhost:27017/mydb";
     MongoClient.connect(url, function(err, db) {
-    //   if (err) throw err;
+        if (err) {
+            console.error('An error occurred connecting to MongoDB: ', err);
+        } else {
     var dbo = db.db("mydb");
       console.log("Database created!");
       db.close();
+        }
     });
 }
 
 exports.insertHistoryLineIntoDb = function (historyLines) {
     if (!Array.isArray(historyLines) && historyLines.length > 0) return;
-    console.log(historyLines);
+    // console.log(historyLines);
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb://localhost:27017/mydb";
     MongoClient.connect(url, function(err, db) {
         //   if (err) throw err;
-        var dbo = db.db("mydb");
+        var dbo = db.db("yggdrasil");
         dbo.collection("history").insertMany(historyLines, function(err, res) {
             if (err) throw err;
             console.log("Number of documents inserted: " + res.insertedCount);
@@ -29,8 +32,7 @@ exports.insertHistoryLineIntoDb = function (historyLines) {
         });
 }
 
-exports.
-processHistoryFile = function (files, device) {
+exports.processHistoryFile = function (files, device) {
     // console.log(Object.keys(files));
     var lineReader;
     // Black magic
@@ -54,12 +56,14 @@ processHistoryFile = function (files, device) {
         if (check) {
             let myRegexp = /^\s*([0-9]*)(.*)/g;
             let match = myRegexp.exec(line)
-            console.log(match);
+            // console.log(match);
             allObj.push({ date: Date.now(), historyLine: match[0], device: device, lineIndex : match[1] });
+            // console.log(allObj);
         }  else {
             // console.log('Ignored line content:');
             // console.log(line);
         }
     });
+    // console.log(allObj);
     return allObj;
 }
